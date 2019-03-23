@@ -28,61 +28,28 @@ export default new Vuex.Store({
       state.rooms = rooms
     },
     setListener(state, listener) {
+      //unsubscribe from current listener
       state.listener()
       state.listener = listener
     }
   },
   actions: {
     getRooms({ commit, dispatch }) {
-      commit('setListener', db.collection('rooms').onSnapshot(querySnapshot => {
-        let rooms = []
-        querySnapshot.forEach(docRef => {
-          let room = docRef.data()
-          room.id = docRef.id
-          rooms.push(room)
-        })
-        commit('setRooms', rooms)
-      }))
+      //set listener
     },
     createRoom({ commit, dispatch }, room) {
-      db.collection("rooms").add(room)
-        .then(docRef => {
-          console.log("successfully created room", docRef)
-          router.push({ name: 'chatroom', params: { roomId: docRef.id } })
-        }).catch(err => {
-          console.error(err)
-        })
+      //add data
     },
     connectToRoom({ commit, dispatch }, payload) {
-      commit('setListener',
-        db.collection('rooms').doc(payload.id).onSnapshot(docSnapshot => {
-          let room = docSnapshot.data()
-          room.id = docSnapshot.id
-          db.collection('rooms').doc(payload.id).collection("messages").orderBy("time", "desc").limit(13).onSnapshot(querySnapshot => {
-            room.messages = []
-            querySnapshot.forEach(docRef => {
-              let message = docRef.data()
-              room.messages.push(message)
-            })
-            room.messages.sort((a, b) => {
-              return a.time - b.time > 0 ? 1 : -1;
-            });
-            commit('setChatroom', room)
-          })
-
-        }))
+      //set listener
     },
     sendMessage({ commit, dispatch }, payload) {
-      db.collection('rooms').doc(payload.roomId).collection("messages").add(payload.message)
-        .then(res => {
-          console.log(res)
-        })
+      //add data
     },
     login({ commit }) {
       api.get('')
         .then(res => {
           commit('setUser', res.data)
-          console.log(res.data.region)
         })
         .catch(err => {
           console.error(err)
@@ -90,3 +57,112 @@ export default new Vuex.Store({
     }
   }
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// getRooms({ commit, dispatch }) {
+//   commit('setListener', db.collection('rooms').onSnapshot(querySnapshot => {
+//     let rooms = []
+//     querySnapshot.forEach(docRef => {
+//       let room = docRef.data()
+//       room.id = docRef.id
+//       rooms.push(room)
+//     })
+//     commit('setRooms', rooms)
+//   }))
+// },
+// createRoom({ commit, dispatch }, room) {
+//   db.collection("rooms").add(room)
+//     .then(docRef => {
+//       console.log("successfully created room", docRef)
+//       router.push({ name: 'chatroom', params: { roomId: docRef.id } })
+//     }).catch(err => {
+//       console.error(err)
+//     })
+// },
+// connectToRoom({ commit, dispatch }, payload) {
+//   commit('setListener',
+//     db.collection('rooms').doc(payload.id).onSnapshot(docSnapshot => {
+//       let room = docSnapshot.data()
+//       room.id = docSnapshot.id
+//       db.collection('rooms').doc(payload.id).collection("messages").orderBy("time", "desc").limit(13).onSnapshot(querySnapshot => {
+//         room.messages = []
+//         querySnapshot.forEach(docRef => {
+//           let message = docRef.data()
+//           room.messages.push(message)
+//         })
+//         room.messages.sort((a, b) => {
+//           return a.time - b.time > 0 ? 1 : -1;
+//         });
+//         commit('setChatroom', room)
+//       })
+
+//     }))
+// },
+// sendMessage({ commit, dispatch }, payload) {
+//   db.collection('rooms').doc(payload.roomId).collection("messages").add(payload.message)
+//     .then(docRef => {
+//       console.log(docRef)
+//     })
+// },
