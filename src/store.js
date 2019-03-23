@@ -58,7 +58,7 @@ export default new Vuex.Store({
         db.collection('rooms').doc(payload.id).onSnapshot(docSnapshot => {
           let room = docSnapshot.data()
           room.id = docSnapshot.id
-          db.collection('rooms').doc(payload.id).collection("messages").onSnapshot(querySnapshot => {
+          db.collection('rooms').doc(payload.id).collection("messages").orderBy("time", "desc").limit(13).onSnapshot(querySnapshot => {
             room.messages = []
             querySnapshot.forEach(docRef => {
               let message = docRef.data()

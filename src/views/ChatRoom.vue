@@ -2,14 +2,22 @@
   <div class="chat m-4">
     <div class="row">
       <div class="col-12 messages-area border border-secondary rounded">
-        <h1>{{room.name}} Chat</h1>
+        <h1>{{room.name}}</h1>
         <div class="row">
           <div
             class="col-12 text-left"
             :class="{'bg-secondary text-white': i%2 == 0, 'bg-light': i%2 != 0}"
             v-for="(m,i) in room.messages"
             :key="m.id"
-          >{{getTime(m.time)}}{{m.user == user.name ? 'me' : m.user}}: {{m.message}}</div>
+          >
+            <p>
+              <b data-toggle="modal" :data-target="'#modal'+i" class="clickable">
+                {{getTime(m.time)}}
+                <span>{{m.user == user.name ? 'me' : m.user}}</span>:
+              </b>
+              {{m.message}}
+            </p>
+          </div>
         </div>
       </div>
       <form class="col-12 input-group my-2 px-0" @submit.prevent="sendMessage">
@@ -48,6 +56,9 @@ export default {
   },
   methods: {
     sendMessage() {
+      if (!this.message.length) {
+        return;
+      }
       let message = {
         user: this.user.name,
         time: Date.now(),
@@ -57,13 +68,14 @@ export default {
         message,
         roomId: this.$route.params.roomId
       });
+      this.message = "";
     },
     getTime(ms) {
       let date = new Date(ms);
-      return date.getHours() % 12 == 0
-        ? `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}am `
-        : `${date.getHours() -
-            12}:${date.getMinutes()}:${date.getSeconds()}pm `;
+      let amOrPm = date.getHours() % 12 > 0 && date.getHours() - 12 > 0;
+      return amOrPm
+        ? `${date.getHours() - 12}:${date.getMinutes()}:${date.getSeconds()}pm `
+        : `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}am `;
     }
   }
 };
